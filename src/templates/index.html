@@ -2,13 +2,10 @@
 <html>
     <head>
         <style>
-            .container {
-                padding-top: 30px;
-            }
-
-            .big-label {
-                font-size: 20px;
-            }
+            * { margin:0; padding:0; }
+            html, body { width:100%; height:100%; }
+            canvas { display:block; }
+            canvas { background: #eee; }
         </style>
 
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -16,31 +13,33 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="http://bootswatch.com/superhero/bootstrap.min.css">
         <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js">
+        </script>
     </head>
-    <body>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4"></div>
-                <div class="col-md-4">
-                    <form onsubmit="submitForm()">
-                        <div class="form-group">
-                            <label for="name" class="big-label"><b>Name</b></label>
-                            <input style="width: 100%;" type="text" class="form-control" name="name" id="name" placeholder="Enter robot name">
-                        </div>
-                        <button style="width: 100%;" type="button" onclick="submitForm()" class="btn btn-default">Submit</button>
-                    </form>
-                </div>
-            </div>
-        </div>
 
+    <body>
+        <canvas id="canvas"></canvas>
+        <!-- <script src="/src/js/waypoint_selector.js"></script> -->
         <script>
-            window.onload = function() {
-                $("form").submit(function(e) {
-                    e.preventDefault();
-                    window.location = "/controller/" + $("#name").val();
-                });
-            }
+            (function () {
+                var canvas = document.getElementById("canvas");
+                context = canvas.getContext('2d');
+
+                // resize the canvas to fill browser window dynamically
+                window.addEventListener('resize', resizeCanvas, false);
+
+                function resizeCanvas() {
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                    drawStuff();
+                }
+
+                resizeCanvas();
+
+                function drawStuff() {
+
+                }
+            })();
         </script>
     </body>
 </html>

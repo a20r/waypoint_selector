@@ -5,6 +5,7 @@ __all__ = ["pageserver", "restful"]
 
 import signal
 import sys
+import sh
 import rospy
 import pageserver
 import restful
@@ -13,12 +14,11 @@ from nav_msgs.msg import OccupancyGrid
 
 
 def update_occ_grid(occ_grid):
-    if config.occ_grid is None:
-        config.occ_grid = occ_grid
-    else:
-        for i in xrange(len(occ_grid.data)):
-            if not occ_grid.data[i] == config.occ_grid.data[i]:
-                config.occ_grid_updates[i] = occ_grid.data[i]
+    for i in xrange(len(occ_grid.data)):
+        if config.occ_grid is None or not occ_grid.data[i]\
+                == config.occ_grid.data[i]:
+            config.occ_grid_updates[i] = occ_grid.data[i]
+    config.occ_grid = occ_grid
 
 
 def signal_handler(signal, frame):
@@ -34,7 +34,7 @@ if __name__ == "__main__":
         occ_sub = rospy.Subscriber("topo_occupancy_grid", OccupancyGrid,
                                    update_occ_grid)
         config.app.run(host=host, port=port, use_reloader=False, debug=True,
-                       threaded=True)
+                       threaded=False)
         rospy.spin()
     else:
         raise Exception("Correct argument form not supplied")
