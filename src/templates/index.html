@@ -1,0 +1,46 @@
+
+<html>
+    <head>
+        <style>
+            .container {
+                padding-top: 30px;
+            }
+
+            .big-label {
+                font-size: 20px;
+            }
+        </style>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <link rel="shortcut icon" href="http://faviconist.com/icons/a4da5758b016ca4b8c17d78c77729759/favicon.ico"/>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="http://bootswatch.com/superhero/bootstrap.min.css">
+        <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
+                    <form onsubmit="submitForm()">
+                        <div class="form-group">
+                            <label for="name" class="big-label"><b>Name</b></label>
+                            <input style="width: 100%;" type="text" class="form-control" name="name" id="name" placeholder="Enter robot name">
+                        </div>
+                        <button style="width: 100%;" type="button" onclick="submitForm()" class="btn btn-default">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            window.onload = function() {
+                $("form").submit(function(e) {
+                    e.preventDefault();
+                    window.location = "/controller/" + $("#name").val();
+                });
+            }
+        </script>
+    </body>
+</html>
