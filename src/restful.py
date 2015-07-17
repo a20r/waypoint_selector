@@ -16,7 +16,7 @@ def get_grid():
     grid = dict()
     grid["height"] = config.occ_grid.info.height
     grid["width"] = config.occ_grid.info.width
-    grid["data"] = np.reshape(config.occ_grid.data,
+    grid["data"] = np.reshape(np.array(list(config.occ_grid.data)),
                               (grid["width"], grid["height"])).tolist()
     return jsonify(grid)
 

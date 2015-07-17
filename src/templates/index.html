@@ -13,8 +13,10 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="http://bootswatch.com/superhero/bootstrap.min.css">
         <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js">
-        </script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.2.1/backbone&#45;min.js"/></script> -->
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore&#45;min.js"/></script> -->
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/two.js/0.4.0/two.clean.min.js"></script> -->
     </head>
 
     <body>
@@ -23,22 +25,27 @@
         <script>
             (function () {
                 var canvas = document.getElementById("canvas");
-                context = canvas.getContext('2d');
+                var context = canvas.getContext('2d');
 
-                // resize the canvas to fill browser window dynamically
-                window.addEventListener('resize', resizeCanvas, false);
-
-                function resizeCanvas() {
-                    canvas.width = window.innerWidth;
-                    canvas.height = window.innerHeight;
-                    drawStuff();
+                function drawPixel(x, y) {
+                    context.fillRect(x, y, 1, 1);
                 }
 
-                resizeCanvas();
-
-                function drawStuff() {
-
-                }
+                $.getJSON("/grid", function(grid) {
+                    canvas.width = grid["width"];
+                    canvas.height = grid["height"];
+                    for (var i = 0; i < grid.data.length; i++) {
+                        for (var j = 0; j < grid.data[0].length; j++) {
+                            if (grid.data[i][j] > 0) {
+                                drawPixel(i, j);
+                            }
+                        }
+                    }
+                    window.setInterval(function () {
+                        $.getJSON("/updates", function(updates) {
+                        });
+                    }, 500);
+                });
             })();
         </script>
     </body>
