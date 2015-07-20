@@ -25,4 +25,9 @@ default hostname and 8080 as the default port. Once the node has been
 launched, you are able to use the UI by going to your browser and 
 going to `http://localhost:8080`.
 
-# Configuration
+# Parameters
+Here is a list of parameters and their descriptions as used in the 
+`waypoint_selector.launch` file.
+
+- `host`, `port`
+    - The hostname and port number where the server will run
