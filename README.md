@@ -6,7 +6,7 @@ to allow a user to select waypoints inside an occupancy grid. The waypoints
 selected can then be used by different packages and to plan a route
 between them.
 
-![wp](https://raw.github.com/wallarelvo/waypoint_selector/master/sandbox/readme.png)
+![wp](/sandbox/readme.png)
 
 
 # Installation
