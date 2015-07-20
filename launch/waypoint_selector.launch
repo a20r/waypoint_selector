@@ -8,6 +8,8 @@
             value="topo_occupancy_grid"/>
         <param name="waypoints_topic" type="string"
             value="waypoints"/>
+        <param name="odom_topic" type="string"
+            value="odom"/>
         <param name="tour_topic" type="string"
             value="topo_tour"/>
     </node>
