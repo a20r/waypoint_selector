@@ -5,7 +5,6 @@ __all__ = ["pageserver", "restful"]
 
 import signal
 import sys
-import sh
 import rospy
 import pageserver
 import restful
@@ -27,17 +26,16 @@ def signal_handler(signal, frame):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) == 3:
-        host = sys.argv[1]
-        port = int(sys.argv[2])
-        signal.signal(signal.SIGINT, signal_handler)
-        rospy.init_node("waypoint_selector", anonymous=False)
-        occ_sub = rospy.Subscriber("topo_occupancy_grid", OccupancyGrid,
-                                   update_occ_grid)
-        config.waypoints_pub = rospy.Publisher("/waypoints_raw", Path,
-                                               queue_size=0)
-        config.app.run(host=host, port=port, use_reloader=False, debug=True,
-                       threaded=False)
-        rospy.spin()
-    else:
-        raise Exception("Correct argument form not supplied")
+    signal.signal(signal.SIGINT, signal_handler)
+    rospy.init_node("waypoint_selector", anonymous=False)
+    host = rospy.get_param("~host")
+    port = rospy.get_param("~port")
+    occ_topic = rospy.get_param("~occupancy_grid_topic")
+    waypoints_topic = rospy.get_param("~waypoints_topic")
+    occ_sub = rospy.Subscriber(occ_topic, OccupancyGrid,
+                               update_occ_grid)
+    config.waypoints_pub = rospy.Publisher(waypoints_topic, Path,
+                                           queue_size=0)
+    config.app.run(host=host, port=port, use_reloader=False, debug=True,
+                   threaded=False)
+    rospy.spin()
