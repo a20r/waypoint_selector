@@ -11,7 +11,7 @@ between them.
 
 # Installation
 
-    $ sudo pip install -r requirements.txt
+    $ sudo ./install.sh
 
 # Running
 Firstly, you will have to start the ROS nodes that will publish the occupancy
