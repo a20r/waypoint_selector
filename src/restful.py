@@ -1,7 +1,10 @@
 
 import config
+import json
 import numpy as np
-from flask import jsonify
+from nav_msgs.msg import Path
+from geometry_msgs.msg import PoseStamped
+from flask import jsonify, request
 
 
 @config.app.route("/updates", methods=["GET"])
@@ -23,7 +26,13 @@ def get_grid():
 
 @config.app.route("/waypoints", methods=["POST"])
 def post_waypoints():
-    waypoints = request.form["waypoints"]
+    waypoints = json.loads(request.form["waypoints"])
     config.waypoints = waypoints
+    path = Path()
     for waypoint in waypoints:
-        pass
+        ps = PoseStamped()
+        ps.pose.position.x = waypoint["x"]
+        ps.pose.position.y = waypoint["y"]
+        path.poses.append(ps)
+    config.waypoints_pub.publish(path)
+    return ""

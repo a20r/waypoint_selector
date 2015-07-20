@@ -10,7 +10,7 @@ import rospy
 import pageserver
 import restful
 import config
-from nav_msgs.msg import OccupancyGrid
+from nav_msgs.msg import OccupancyGrid, Path
 
 
 def update_occ_grid(occ_grid):
@@ -34,6 +34,8 @@ if __name__ == "__main__":
         rospy.init_node("waypoint_selector", anonymous=False)
         occ_sub = rospy.Subscriber("topo_occupancy_grid", OccupancyGrid,
                                    update_occ_grid)
+        config.waypoints_pub = rospy.Publisher("/waypoints_raw", Path,
+                                               queue_size=0)
         config.app.run(host=host, port=port, use_reloader=False, debug=True,
                        threaded=False)
         rospy.spin()

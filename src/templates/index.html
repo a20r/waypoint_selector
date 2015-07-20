@@ -45,6 +45,7 @@
                 }
 
                 function drawGrid() {
+                context.fillStyle = "black";
                     for (var i = 0; i < grid.width; i++) {
                         for (var j = 0; j < grid.height; j++) {
                             if (grid.data[j][i] > 0) {
@@ -67,6 +68,12 @@
                 $("#submit").click(function() {
                     context.clearRect(0, 0, canvas.width, canvas.height);
                     drawGrid();
+                    $.ajax({
+                        type: "POST",
+                        url: "/waypoints",
+                        data: {waypoints: JSON.stringify(waypoints)}
+                    });
+                    waypoints = new Array();
                 });
 
                 canvas.addEventListener("mouseup", function(evt) {
@@ -75,7 +82,11 @@
                     context.font = "24px serif";
                     context.fillStyle = 'black';
                     context.fillText(waypoints.length,
-                        mousePos.x + 3, mousePos.y - 3);
+                        mousePos.x + 4, mousePos.y - 4);
+                    context.lineWidth = 0.3;
+                    context.strokeStyle = 'white';
+                    context.strokeText(waypoints.length,
+                        mousePos.x + 4, mousePos.y - 4);
                     drawCircle(mousePos.x, mousePos.y, 2);
                 }, false);
 

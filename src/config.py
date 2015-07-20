@@ -7,3 +7,4 @@ app.config.from_object(__name__)
 occ_grid = None
 occ_grid_updates = dict()
 waypoints = list()
+waypoints_pub = None
