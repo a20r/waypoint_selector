@@ -21,6 +21,11 @@ def update_occ_grid(occ_grid):
     config.occ_grid = occ_grid
 
 
+def update_tour(tour):
+    config.tour = tour
+    config.new_tour = True
+
+
 def signal_handler(signal, frame):
     sys.exit(0)
 
@@ -32,10 +37,10 @@ if __name__ == "__main__":
     port = rospy.get_param("~port")
     occ_topic = rospy.get_param("~occupancy_grid_topic")
     waypoints_topic = rospy.get_param("~waypoints_topic")
-    occ_sub = rospy.Subscriber(occ_topic, OccupancyGrid,
-                               update_occ_grid)
-    config.waypoints_pub = rospy.Publisher(waypoints_topic, Path,
-                                           queue_size=0)
+    tour_topic = rospy.get_param("~tour_topic")
+    occ_sub = rospy.Subscriber(occ_topic, OccupancyGrid, update_occ_grid)
+    tour_sub = rospy.Subscriber(tour_topic, Path, update_tour)
+    config.waypoints_pub = rospy.Publisher(waypoints_topic, Path, queue_size=0)
     config.app.run(host=host, port=port, use_reloader=False, debug=True,
                    threaded=False)
     rospy.spin()

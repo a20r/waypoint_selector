@@ -1,11 +1,17 @@
 
 <html>
     <head>
+        <title>Waypoint Selector</title>
         <style>
-            * { margin:0; padding:0; }
-            html, body { width:100%; height:100%; }
-            canvas { display:block; }
-            canvas { background: #eee; }
+            body {
+                padding-top: 10px;
+                padding-bottom: 5px;
+            }
+
+            canvas {
+                display: block;
+                background: #eee;
+            }
         </style>
 
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -20,10 +26,12 @@
     </head>
 
     <body>
-        <canvas id="canvas"></canvas> <br/>
-        <input class="btn btn-default" type="button"
-            value="Submit" id="submit">
-        <!-- <script src="/src/js/waypoint_selector.js"></script> -->
+        <div class="row text-center">
+            <h1>Waypoint Selector</h1>
+            <canvas id="canvas"></canvas> <br/>
+            <input class="btn btn-default" type="button"
+                value="Submit" id="submit">
+        </div>
         <script>
             (function () {
                 var canvas = document.getElementById("canvas");
@@ -31,10 +39,7 @@
                 var update_interval = 0.5 * 1000; // ms
                 var waypoints = new Array();
                 var grid = null;
-
-                function drawPixel(x, y) {
-                    context.fillRect(x, y, 1, 1);
-                }
+                var need_to_clear = false;
 
                 function getMousePos(canvas, evt) {
                     var rect = canvas.getBoundingClientRect();
@@ -55,6 +60,15 @@
                     }
                 }
 
+                function drawPixel(x, y) {
+                    context.fillRect(x, y, 1, 1);
+                }
+
+                function drawPathPixel(x, y) {
+                    context.fillStyle = "red";
+                    context.fillRect(x - 1, y - 1, 2, 2);
+                }
+
                 function drawCircle(x, y, radius) {
                     context.beginPath();
                     context.arc(x, y, radius, 0, 2 * Math.PI, false);
@@ -66,17 +80,34 @@
                 }
 
                 $("#submit").click(function() {
-                    context.clearRect(0, 0, canvas.width, canvas.height);
                     drawGrid();
                     $.ajax({
                         type: "POST",
                         url: "/waypoints",
-                        data: {waypoints: JSON.stringify(waypoints)}
+                        data: {waypoints: JSON.stringify(waypoints)},
+                        success: function() {
+                            setTimeout(function () {
+                                $.getJSON("/tour", function(data) {
+                                    for (var i = 0; i < data.length; i++) {
+                                        drawPathPixel(data[i].x,
+                                            grid.height - data[i].y);
+                                    }
+                                });
+                            }, 1000);
+                        }
                     });
                     waypoints = new Array();
+                    need_to_clear = true;
                 });
 
                 canvas.addEventListener("mouseup", function(evt) {
+                    if (need_to_clear) {
+                        context.clearRect(0, 0, canvas.width,
+                            canvas.height);
+                        drawGrid();
+                        need_to_clear = false;
+                    }
+
                     var mousePos = getMousePos(canvas, evt);
                     waypoints.push({x: mousePos.x,
                         y: grid.height - mousePos.y});
@@ -99,7 +130,7 @@
 
                     window.setInterval(function () {
                         $.getJSON("/updates", function(updates) {
-                            // to do 
+                            // todo 
                         });
                     }, update_interval);
                 });

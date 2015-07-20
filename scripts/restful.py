@@ -46,6 +46,22 @@ def get_grid():
     return jsonify(grid)
 
 
+@config.app.route("/tour", methods=["GET"])
+def get_tour():
+    while not config.new_tour:
+        pass
+
+    tour = list()
+    mmd = config.occ_grid.info
+    for ps in config.tour.poses:
+        pos = dict()
+        pos["x"] = int(ps.pose.position.x / mmd.resolution)
+        pos["y"] = int(ps.pose.position.y / mmd.resolution)
+        tour.append(pos)
+    config.new_tour = False
+    return json.dumps(tour)
+
+
 @config.app.route("/waypoints", methods=["POST"])
 def post_waypoints():
     waypoints = json.loads(request.form["waypoints"])

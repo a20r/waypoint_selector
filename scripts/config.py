@@ -8,3 +8,5 @@ occ_grid = None
 occ_grid_updates = dict()
 waypoints = list()
 waypoints_pub = None
+tour = None
+new_tour = True
