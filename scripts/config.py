@@ -10,3 +10,4 @@ waypoints = list()
 waypoints_pub = None
 tour = None
 new_tour = True
+odom = None

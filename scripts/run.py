@@ -9,7 +9,7 @@ import rospy
 import pageserver
 import restful
 import config
-from nav_msgs.msg import OccupancyGrid, Path
+from nav_msgs.msg import OccupancyGrid, Path, Odometry
 
 
 def update_occ_grid(occ_grid):
@@ -19,6 +19,10 @@ def update_occ_grid(occ_grid):
                 == config.occ_grid.data[i]:
             config.occ_grid_updates[i] = occ_grid.data[i]
     config.occ_grid = occ_grid
+
+
+def update_robot_odom(odom):
+    config.odom = odom
 
 
 def update_tour(tour):
@@ -37,8 +41,10 @@ if __name__ == "__main__":
     port = rospy.get_param("~port")
     occ_topic = rospy.get_param("~occupancy_grid_topic")
     waypoints_topic = rospy.get_param("~waypoints_topic")
+    odom_topic = rospy.get_param("~odom_topic")
     tour_topic = rospy.get_param("~tour_topic")
     occ_sub = rospy.Subscriber(occ_topic, OccupancyGrid, update_occ_grid)
+    odom_sub = rospy.Subscriber(odom_topic, Odometry, update_robot_odom)
     tour_sub = rospy.Subscriber(tour_topic, Path, update_tour)
     config.waypoints_pub = rospy.Publisher(waypoints_topic, Path, queue_size=0)
     config.app.run(host=host, port=port, use_reloader=False, debug=True,
