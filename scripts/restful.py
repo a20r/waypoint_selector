@@ -4,7 +4,29 @@ import json
 import numpy as np
 from nav_msgs.msg import Path
 from geometry_msgs.msg import PoseStamped
+from tf import transformations
 from flask import jsonify, request
+
+
+def transform_waypoint(waypoint):
+    ps = PoseStamped()
+    origin = config.occ_grid.info.origin
+    quat = [0, 0, 0, 0]
+    quat[0] = origin.orientation.w
+    quat[1] = origin.orientation.x
+    quat[2] = origin.orientation.y
+    quat[3] = origin.orientation.z
+    rot = transformations.quaternion_matrix(quat)
+    wp = np.array([waypoint["x"], waypoint["y"], 0])
+    rot_wp = np.array(np.matrix(wp) * np.matrix(rot[:3, :3]))[0]
+    rot_wp *= config.occ_grid.info.resolution
+    rot_wp[0] += origin.position.x
+    rot_wp[1] += origin.position.y
+    rot_wp[2] += origin.position.z
+    ps.pose.position.x = rot_wp[0]
+    ps.pose.position.y = rot_wp[1]
+    ps.pose.position.z = rot_wp[2]
+    return ps
 
 
 @config.app.route("/updates", methods=["GET"])
@@ -30,9 +52,8 @@ def post_waypoints():
     config.waypoints = waypoints
     path = Path()
     for waypoint in waypoints:
-        ps = PoseStamped()
-        ps.pose.position.x = waypoint["x"]
-        ps.pose.position.y = waypoint["y"]
+        ps = transform_waypoint(waypoint)
+        # print ps
         path.poses.append(ps)
     config.waypoints_pub.publish(path)
     return ""
