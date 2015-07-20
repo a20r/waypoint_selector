@@ -31,3 +31,12 @@ Here is a list of parameters and their descriptions as used in the
 
 - `host`, `port`
     - The hostname and port number where the server will run
+
+- `occupancy_grid_topic`
+    - The topic where the occupancy grid is being published
+
+- `waypoints_topic`
+    - The topic where waypoints should be published
+
+- `tour_topic`
+    - The topic where the tour path will be published
