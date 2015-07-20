@@ -21,7 +21,8 @@
 
     <body>
         <canvas id="canvas"></canvas> <br/>
-        <input class="btn btn-default" type="button" value="Start" id="start">
+        <input class="btn btn-default" type="button"
+            value="Submit" id="submit">
         <!-- <script src="/src/js/waypoint_selector.js"></script> -->
         <script>
             (function () {
@@ -29,7 +30,7 @@
                 var context = canvas.getContext('2d');
                 var update_interval = 0.5 * 1000; // ms
                 var waypoints = new Array();
-                var collecting_waypoints = false;
+                var grid = null;
 
                 function drawPixel(x, y) {
                     context.fillRect(x, y, 1, 1);
@@ -43,38 +44,7 @@
                     };
                 }
 
-                $("#start").click(function() {
-                    console.log(collecting_waypoints);
-                    if (collecting_waypoints) {
-                        $("#start").val("Start");
-                        collecting_waypoints = false;
-                    } else {
-                        $("#start").val("Stop");
-                        collecting_waypoints = true;
-                    }
-                });
-
-                canvas.addEventListener('mousemove', function(evt) {
-                    var mousePos = getMousePos(canvas, evt);
-                    var message = 'Mouse position: ' + mousePos.x + ','
-                        + mousePos.y;
-                    // console.log(message);
-                }, false);
-
-                canvas.addEventListener("mouseup", function(evt) {
-                    var mousePos = getMousePos(canvas, evt);
-                    var message = 'Mouse up: ' + mousePos.x + ','
-                        + mousePos.y;
-                    waypoints.push(mousePos);
-                    context.font = "24px serif";
-                    context.fillText(waypoints.length, mousePos.x,
-                        mousePos.y);
-                    console.log(message);
-                }, false);
-
-                $.getJSON("/grid", function(grid) {
-                    canvas.width = grid["width"];
-                    canvas.height = grid["height"];
+                function drawGrid() {
                     for (var i = 0; i < grid.width; i++) {
                         for (var j = 0; j < grid.height; j++) {
                             if (grid.data[j][i] > 0) {
@@ -82,9 +52,42 @@
                             }
                         }
                     }
+                }
+
+                function drawCircle(x, y, radius) {
+                    context.beginPath();
+                    context.arc(x, y, radius, 0, 2 * Math.PI, false);
+                    context.fillStyle = 'green';
+                    context.fill();
+                    context.lineWidth = 5;
+                    context.strokeStyle = '#003300';
+                    context.stroke();
+                }
+
+                $("#submit").click(function() {
+                    context.clearRect(0, 0, canvas.width, canvas.height);
+                    drawGrid();
+                });
+
+                canvas.addEventListener("mouseup", function(evt) {
+                    var mousePos = getMousePos(canvas, evt);
+                    waypoints.push(mousePos);
+                    context.font = "24px serif";
+                    context.fillStyle = 'black';
+                    context.fillText(waypoints.length,
+                        mousePos.x + 3, mousePos.y - 3);
+                    drawCircle(mousePos.x, mousePos.y, 2);
+                }, false);
+
+                $.getJSON("/grid", function(in_grid) {
+                    grid = in_grid;
+                    canvas.width = grid["width"];
+                    canvas.height = grid["height"];
+                    drawGrid();
+
                     window.setInterval(function () {
                         $.getJSON("/updates", function(updates) {
-                            // to be implemented 
+                            // to do 
                         });
                     }, update_interval);
                 });
