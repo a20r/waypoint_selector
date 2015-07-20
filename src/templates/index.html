@@ -26,25 +26,49 @@
             (function () {
                 var canvas = document.getElementById("canvas");
                 var context = canvas.getContext('2d');
+                var update_interval = 0.5 * 1000; // ms
 
                 function drawPixel(x, y) {
                     context.fillRect(x, y, 1, 1);
                 }
 
+                function getMousePos(canvas, evt) {
+                    var rect = canvas.getBoundingClientRect();
+                    return {
+                        x: evt.clientX - rect.left,
+                        y: evt.clientY - rect.top
+                    };
+                }
+
+                canvas.addEventListener('mousemove', function(evt) {
+                    var mousePos = getMousePos(canvas, evt);
+                    var message = 'Mouse position: ' + mousePos.x + ','
+                        + mousePos.y;
+                    // console.log(message);
+                }, false);
+
+                canvas.addEventListener("mouseup", function(evt) {
+                    var mousePos = getMousePos(canvas, evt);
+                    var message = 'Mouse up: ' + mousePos.x + ','
+                        + mousePos.y;
+                    console.log(message);
+                }, false);
+
                 $.getJSON("/grid", function(grid) {
                     canvas.width = grid["width"];
                     canvas.height = grid["height"];
-                    for (var i = 0; i < grid.data.length; i++) {
-                        for (var j = 0; j < grid.data[0].length; j++) {
-                            if (grid.data[i][j] > 0) {
+                    for (var i = 0; i < grid.width; i++) {
+                        for (var j = 0; j < grid.height; j++) {
+                            if (grid.data[j][i] > 0) {
                                 drawPixel(i, j);
                             }
                         }
                     }
                     window.setInterval(function () {
                         $.getJSON("/updates", function(updates) {
+                            // to be implemented 
                         });
-                    }, 500);
+                    }, update_interval);
                 });
             })();
         </script>

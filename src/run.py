@@ -14,6 +14,7 @@ from nav_msgs.msg import OccupancyGrid
 
 
 def update_occ_grid(occ_grid):
+    # not really correct yet
     for i in xrange(len(occ_grid.data)):
         if config.occ_grid is None or not occ_grid.data[i]\
                 == config.occ_grid.data[i]:
