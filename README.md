@@ -1,4 +1,4 @@
-NRL Waypoint Selector
+Waypoint Selector
 =====================
 
 An interactive waypoint selector that uses a web-based user interface
