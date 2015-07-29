@@ -39,10 +39,15 @@ def get_updates():
 @config.app.route("/grid", methods=["GET"])
 def get_grid():
     grid = dict()
-    grid["height"] = config.occ_grid.info.height
-    grid["width"] = config.occ_grid.info.width
-    grid["data"] = np.reshape(np.array(list(config.occ_grid.data)),
-                              (grid["height"], grid["width"])).tolist()
+    try:
+        grid["height"] = config.occ_grid.info.height
+        grid["width"] = config.occ_grid.info.width
+        grid["data"] = np.reshape(np.array(list(config.occ_grid.data)),
+                                  (grid["height"], grid["width"])).tolist()
+    except AttributeError:
+        grid["height"] = 200
+        grid["width"] = 200
+        grid["data"] = np.zeros((200, 200)).tolist()
     return jsonify(grid)
 
 
