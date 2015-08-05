@@ -54,7 +54,7 @@
                 }
 
                 function drawGrid() {
-                context.fillStyle = "black";
+                    context.fillStyle = "black";
                     for (var i = 0; i < grid.width; i++) {
                         for (var j = 0; j < grid.height; j++) {
                             if (grid.data[j][i] > 0) {
@@ -65,22 +65,48 @@
                 }
 
                 function drawPixel(x, y) {
+                    context.fillStyle = "black";
                     context.fillRect(x, y, 1, 1);
                 }
 
-                function drawPathPixel(x, y) {
-                    context.fillStyle = "red";
-                    context.fillRect(x - 1, y - 1, 2, 2);
+                function drawFree(x, y) {
+                    context.fillStyle = "white";
+                    context.fillRect(x, y, 1, 1);
                 }
 
-                function drawCircle(x, y, radius) {
+
+                function drawPathPixel(x, y) {
+                    context.fillStyle = "red";
+                    context.fillRect(x - 5, y - 5, 10, 10);
+                }
+
+                function drawCircle(x, y, radius, color) {
                     context.beginPath();
                     context.arc(x, y, radius, 0, 2 * Math.PI, false);
-                    context.fillStyle = 'green';
+                    if (color == undefined) {
+                        context.fillStyle = 'green';
+                    } else {
+                        context.fillStyle = color;
+                    }
                     context.fill();
                     context.lineWidth = 5;
                     context.strokeStyle = '#003300';
                     context.stroke();
+                }
+
+                function drawClick(evt) {
+                    var mousePos = getMousePos(canvas, evt);
+                    waypoints.push({x: mousePos.x,
+                        y: grid.height - mousePos.y});
+                    context.font = "24px serif";
+                    context.fillStyle = 'black';
+                    context.fillText(waypoints.length,
+                        mousePos.x + 4, mousePos.y - 4);
+                    context.lineWidth = 0.3;
+                    context.strokeStyle = 'white';
+                    context.strokeText(waypoints.length,
+                        mousePos.x + 4, mousePos.y - 4);
+                    drawCircle(mousePos.x, mousePos.y, 2);
                 }
 
                 $("#submit").click(function() {
@@ -93,8 +119,8 @@
                             setTimeout(function () {
                                 $.getJSON("/tour", function(data) {
                                     for (var i = 0; i < data.length; i++) {
-                                        drawPathPixel(data[i].x,
-                                            grid.height - data[i].y);
+                                        drawCircle(data[i].x,
+                                            grid.height - data[i].y, 3, "red");
                                     }
                                 });
                             }, 1000);
@@ -110,20 +136,10 @@
                             canvas.height);
                         drawGrid();
                         need_to_clear = false;
-                    }
+                    } 
 
-                    var mousePos = getMousePos(canvas, evt);
-                    waypoints.push({x: mousePos.x,
-                        y: grid.height - mousePos.y});
-                    context.font = "24px serif";
-                    context.fillStyle = 'black';
-                    context.fillText(waypoints.length,
-                        mousePos.x + 4, mousePos.y - 4);
-                    context.lineWidth = 0.3;
-                    context.strokeStyle = 'white';
-                    context.strokeText(waypoints.length,
-                        mousePos.x + 4, mousePos.y - 4);
-                    drawCircle(mousePos.x, mousePos.y, 2);
+                    drawClick(evt);
+
                 }, false);
 
                 $.getJSON("/grid", function(in_grid) {
@@ -134,7 +150,14 @@
 
                     window.setInterval(function () {
                         $.getJSON("/updates", function(updates) {
-                            // todo 
+                            for (var i = 0; i < updates.length; i++) {
+                                up = updates[i]
+                                if (up[2] > 0) {
+                                    drawPixel(up[0], up[1]);
+                                } else {
+                                    drawFree(up[0], up[1]);
+                                }
+                            }
                         });
                     }, update_interval);
                 });

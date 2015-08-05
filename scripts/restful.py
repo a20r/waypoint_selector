@@ -32,7 +32,7 @@ def transform_waypoint(waypoint):
 @config.app.route("/updates", methods=["GET"])
 def get_updates():
     updates_to_ship = jsonify(config.occ_grid_updates)
-    config.occ_grid_updates = dict()
+    config.occ_grid_updates = list()
     return updates_to_ship
 
 
@@ -44,6 +44,9 @@ def get_grid():
         grid["width"] = config.occ_grid.info.width
         grid["data"] = np.reshape(np.array(list(config.occ_grid.data)),
                                   (grid["height"], grid["width"])).tolist()
+        grid["odom"] = dict()
+        grid["odom"]["x"] = config.odom.pose.pose.position.x
+        grid["odom"]["y"] = config.odom.pose.pose.position.y
     except AttributeError:
         grid["height"] = 200
         grid["width"] = 200
